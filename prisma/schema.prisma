@@ -10,10 +10,127 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+enum State {
+  AC
+  AL
+  AP
+  AM
+  BA
+  CE
+  DF
+  ES
+  GO
+  MA
+  MT
+  MS
+  MG
+  PA
+  PB
+  PR
+  PE
+  PI
+  RJ
+  RN
+  RS
+  RO
+  RR
+  SC
+  SP
+  SE
+  TO
+}
+
+model City {
   id    String @id @default(uuid())
   name  String
-  email String @unique
+  state State
+  orgs  Org[]
 
-  @@map("users")
+  @@map("cities")
+}
+
+model Org {
+  id          String @id @default(uuid())
+  name        String
+  responsible String
+  email       String @unique
+  address     String
+  cep         String
+
+  city    City   @relation(fields: [city_id], references: [id])
+  city_id String
+
+  whatsapp      String
+  password_hash String
+  created_at    DateTime @default(now())
+
+  @@map("orgs")
+}
+
+enum Age {
+  PUP
+  JUNIOR
+  ADULT
+  SENIOR
+}
+
+enum Size {
+  TINY
+  SMALL
+  MEDIUM
+  LARGE
+  GIANT
+}
+
+enum energyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum independencyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum spaceRequirement {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+model Pet {
+  id                 String            @id @default(uuid())
+  name               String
+  description        String
+  age                Age
+  size               Size
+  energy_level       energyLevel
+  independency_level independencyLevel
+  space_requirement  spaceRequirement
+  pictures           Picture[]
+  requirements       Requirement[]
+  created_at         DateTime          @default(now())
+
+  @@map("pets")
+}
+
+model Picture {
+  id String @id @default(uuid())
+
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String
+
+  @@map("pictures")
+}
+
+model Requirement {
+  id          String @id @default(uuid())
+  description String
+
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String
+
+  @@map("requirements")
 }

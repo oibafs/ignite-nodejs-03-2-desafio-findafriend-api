@@ -1,6 +1,8 @@
 import { prisma } from 'src/lib/prisma'
 import { hash } from 'bcryptjs'
-import { PrismaOrgsRepository } from 'src/repositories/prisma-orgs-repository'
+import { OrgsRepository } from 'src/repositories/orgs-repository'
+import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
+import { Org } from '@prisma/client'
 
 interface RegisterOrgUseCaseRequest {
   name: string
@@ -13,38 +15,46 @@ interface RegisterOrgUseCaseRequest {
   password: string
 }
 
-export async function registerOrgUseCase({
-  name,
-  responsible,
-  email,
-  address,
-  cep,
-  cityId,
-  whatsapp,
-  password,
-}: RegisterOrgUseCaseRequest) {
-  const orgWithSameEmail = await prisma.org.findUnique({
-    where: {
-      email,
-    },
-  })
+interface RegisterOrgUseCaseResponse {
+  org: Org
+}
 
-  if (orgWithSameEmail) {
-    throw new Error('E-mail already registered.')
-  }
+export class RegisterOrgUseCase {
+  constructor(private orgsRepository: OrgsRepository) {}
 
-  const passwordHash = await hash(password, 6)
-
-  const prismaOrgsRepository = new PrismaOrgsRepository()
-
-  await prismaOrgsRepository.create({
+  async execute({
     name,
     responsible,
     email,
     address,
     cep,
-    city_id: cityId,
+    cityId,
     whatsapp,
-    password_hash: passwordHash,
-  })
+    password,
+  }: RegisterOrgUseCaseRequest): Promise<RegisterOrgUseCaseResponse> {
+    const orgWithSameEmail = await prisma.org.findUnique({
+      where: {
+        email,
+      },
+    })
+
+    if (orgWithSameEmail) {
+      throw new OrgAlreadyExistsError()
+    }
+
+    const passwordHash = await hash(password, 6)
+
+    const org = await this.orgsRepository.create({
+      name,
+      responsible,
+      email,
+      address,
+      cep,
+      city_id: cityId,
+      whatsapp,
+      password_hash: passwordHash,
+    })
+
+    return { org }
+  }
 }

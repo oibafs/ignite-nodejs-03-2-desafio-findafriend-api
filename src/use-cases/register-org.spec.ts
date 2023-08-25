@@ -1,37 +1,58 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { compare } from 'bcryptjs'
 import { RegisterOrgUseCase } from './register-org'
+import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository'
+import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository'
+import { CreateCityUseCase } from './create-city'
+import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
+
+let orgsRepository: InMemoryOrgsRepository
+let sut: RegisterOrgUseCase
+let cityId: string
+
+async function createCity() {
+  const citiesRepository = new InMemoryCitiesRepository()
+  const createCityUseCase = new CreateCityUseCase(citiesRepository)
+
+  const { city } = await createCityUseCase.execute({
+    name: 'Recife',
+    state: 'PE',
+  })
+
+  return city.id
+}
 
 describe('Register Org Use Case', () => {
-  it('should hash org password upon registration', async () => {
-    const registerOrgUseCase = new RegisterOrgUseCase({
-      async findByEmail(email) {
-        return null
-      },
+  beforeEach(async () => {
+    orgsRepository = new InMemoryOrgsRepository()
+    sut = new RegisterOrgUseCase(orgsRepository)
 
-      async create(data) {
-        return {
-          id: 'org-1',
-          name: data.name,
-          responsible: data.responsible,
-          email: data.email,
-          address: data.address,
-          cep: data.cep,
-          city_id: data.city_id,
-          whatsapp: data.whatsapp,
-          password_hash: data.password_hash,
-          created_at: new Date(),
-        }
-      },
-    })
+    cityId = await createCity()
+  })
 
-    const { org } = await registerOrgUseCase.execute({
+  it('should be able to register an org', async () => {
+    const { org } = await sut.execute({
       name: 'Fictional Org',
       responsible: 'John Doe',
       email: 'fictional.org@example.com',
       address: 'Somewhere Street 123',
       cep: '12345678',
-      cityId: '6d4d0404-84a4-4213-90bf-36a20993f5fe',
+      cityId,
+      whatsapp: '11912345678',
+      password: '123456',
+    })
+
+    expect(org.id).toEqual(expect.any(String))
+  })
+
+  it('should hash org password upon registration', async () => {
+    const { org } = await sut.execute({
+      name: 'Fictional Org',
+      responsible: 'John Doe',
+      email: 'fictional.org@example.com',
+      address: 'Somewhere Street 123',
+      cep: '12345678',
+      cityId,
       whatsapp: '11912345678',
       password: '123456',
     })
@@ -39,5 +60,33 @@ describe('Register Org Use Case', () => {
     const isPasswordCorrectlyHashed = await compare('123456', org.password_hash)
 
     expect(isPasswordCorrectlyHashed).toBe(true)
+  })
+
+  it('should not be able to register an org with same email twice', async () => {
+    const email = 'fictional.org@example.com'
+
+    await sut.execute({
+      name: 'Fictional Org',
+      responsible: 'John Doe',
+      email,
+      address: 'Somewhere Street 123',
+      cep: '12345678',
+      cityId,
+      whatsapp: '11912345678',
+      password: '123456',
+    })
+
+    await expect(() =>
+      sut.execute({
+        name: 'Fictional Org',
+        responsible: 'John Doe',
+        email,
+        address: 'Somewhere Street 123',
+        cep: '12345678',
+        cityId,
+        whatsapp: '11912345678',
+        password: '123456',
+      }),
+    ).rejects.toBeInstanceOf(OrgAlreadyExistsError)
   })
 })

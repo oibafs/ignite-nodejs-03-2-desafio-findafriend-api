@@ -3,12 +3,11 @@ import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cit
 import { CreateCityUseCase } from './create-city'
 import { CityAlreadyExistsError } from './errors/city-already-exists-error'
 
-let citiesRepository: InMemoryCitiesRepository
 let sut: CreateCityUseCase
 
 describe('Create city Use Case', () => {
   beforeEach(() => {
-    citiesRepository = new InMemoryCitiesRepository()
+    const citiesRepository = new InMemoryCitiesRepository()
     sut = new CreateCityUseCase(citiesRepository)
   })
 

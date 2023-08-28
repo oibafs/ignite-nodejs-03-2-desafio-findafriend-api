@@ -1,4 +1,3 @@
-import { prisma } from 'src/lib/prisma'
 import { hash } from 'bcryptjs'
 import { OrgsRepository } from 'src/repositories/orgs-repository'
 import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
@@ -32,11 +31,7 @@ export class RegisterOrgUseCase {
     whatsapp,
     password,
   }: RegisterOrgUseCaseRequest): Promise<RegisterOrgUseCaseResponse> {
-    const orgWithSameEmail = await prisma.org.findUnique({
-      where: {
-        email,
-      },
-    })
+    const orgWithSameEmail = await this.orgsRepository.findByEmail(email)
 
     if (orgWithSameEmail) {
       throw new OrgAlreadyExistsError()

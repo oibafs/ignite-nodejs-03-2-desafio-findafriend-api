@@ -82,19 +82,19 @@ enum Size {
   GIANT
 }
 
-enum energyLevel {
+enum EnergyLevel {
   LOW
   MEDIUM
   HIGH
 }
 
-enum independencyLevel {
+enum IndependencyLevel {
   LOW
   MEDIUM
   HIGH
 }
 
-enum spaceRequirement {
+enum SpaceRequirement {
   SMALL
   MEDIUM
   LARGE
@@ -106,9 +106,9 @@ model Pet {
   description        String
   age                Age
   size               Size
-  energy_level       energyLevel
-  independency_level independencyLevel
-  space_requirement  spaceRequirement
+  energy_level       EnergyLevel
+  independency_level IndependencyLevel
+  space_requirement  SpaceRequirement
   pictures           Picture[]
   requirements       Requirement[]
   created_at         DateTime          @default(now())
@@ -117,7 +117,8 @@ model Pet {
 }
 
 model Picture {
-  id String @id @default(uuid())
+  id  String @id @default(uuid())
+  url String
 
   pet    Pet    @relation(fields: [pet_id], references: [id])
   pet_id String

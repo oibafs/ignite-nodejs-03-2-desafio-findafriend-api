@@ -50,19 +50,18 @@ model City {
 }
 
 model Org {
-  id          String @id @default(uuid())
-  name        String
-  responsible String
-  email       String @unique
-  address     String
-  cep         String
-
-  city    City   @relation(fields: [city_id], references: [id])
-  city_id String
-
+  id            String   @id @default(uuid())
+  name          String
+  responsible   String
+  email         String   @unique
+  address       String
+  cep           String
+  city          City     @relation(fields: [city_id], references: [id])
+  city_id       String
   whatsapp      String
   password_hash String
   created_at    DateTime @default(now())
+  pets          Pet[]
 
   @@map("orgs")
 }
@@ -111,15 +110,16 @@ model Pet {
   space_requirement  SpaceRequirement
   pictures           Picture[]
   requirements       Requirement[]
+  org                Org               @relation(fields: [org_id], references: [id])
+  org_id             String
   created_at         DateTime          @default(now())
 
   @@map("pets")
 }
 
 model Picture {
-  id  String @id @default(uuid())
-  url String
-
+  id     String @id @default(uuid())
+  url    String
   pet    Pet    @relation(fields: [pet_id], references: [id])
   pet_id String
 
@@ -129,9 +129,8 @@ model Picture {
 model Requirement {
   id          String @id @default(uuid())
   description String
-
-  pet    Pet    @relation(fields: [pet_id], references: [id])
-  pet_id String
+  pet         Pet    @relation(fields: [pet_id], references: [id])
+  pet_id      String
 
   @@map("requirements")
 }

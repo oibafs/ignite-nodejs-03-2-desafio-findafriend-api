@@ -19,6 +19,7 @@ interface CreatePetUseCaseRequest {
   spaceRequirement: SpaceRequirement
   pictures: Prisma.PictureCreateNestedManyWithoutPetInput
   requirements: Prisma.RequirementCreateNestedManyWithoutPetInput
+  orgId: string
 }
 
 interface CreatePetUseCaseResponse {
@@ -38,6 +39,7 @@ export class CreatePetUseCase {
     spaceRequirement,
     pictures,
     requirements,
+    orgId,
   }: CreatePetUseCaseRequest): Promise<CreatePetUseCaseResponse> {
     const pet = await this.petsRepository.create({
       name,
@@ -49,6 +51,7 @@ export class CreatePetUseCase {
       space_requirement: spaceRequirement,
       pictures,
       requirements,
+      org_id: orgId,
     })
 
     return { pet }

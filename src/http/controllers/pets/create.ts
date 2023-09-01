@@ -43,6 +43,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     requirements: {
       create: requirements,
     },
+    orgId: request.user.sub,
   })
 
   return reply.status(201).send()

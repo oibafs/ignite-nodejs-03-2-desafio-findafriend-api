@@ -1,6 +1,6 @@
-import { Prisma, City } from '@prisma/client'
+import { City, State, Prisma } from '@prisma/client'
+import { randomUUID } from 'crypto'
 import { CitiesRepository, CityData } from '../cities-repository'
-import { randomUUID } from 'node:crypto'
 
 export class InMemoryCitiesRepository implements CitiesRepository {
   public items: City[] = []
@@ -14,6 +14,20 @@ export class InMemoryCitiesRepository implements CitiesRepository {
     if (cities.length === 0) {
       return null
     }
+
+    return cities
+  }
+
+  async findStatesWithCitiesAvailable() {
+    const states = [...new Set(this.items.map((item) => item.state))]
+
+    return states
+  }
+
+  async findByState(state: State, page: number) {
+    const cities = this.items
+      .filter((item) => item.state === state)
+      .slice((page - 1) * 20, page * 20)
 
     return cities
   }

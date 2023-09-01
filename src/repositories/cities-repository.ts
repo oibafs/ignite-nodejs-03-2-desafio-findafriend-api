@@ -7,5 +7,7 @@ export interface CityData {
 
 export interface CitiesRepository {
   findByNameAndState(data: CityData): Promise<City[] | null>
+  findStatesWithCitiesAvailable(): Promise<State[]>
+  findByState(state: State, page: number): Promise<City[]>
   create(data: Prisma.CityCreateInput): Promise<City>
 }

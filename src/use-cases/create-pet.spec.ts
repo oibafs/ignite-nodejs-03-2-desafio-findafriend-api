@@ -18,6 +18,7 @@ describe('Create Pet Use Case', () => {
     const { pet } = await sut.execute({
       name: 'Alfredo',
       description: 'Cão de guarda',
+      species: 'DOG',
       age: 'JUNIOR',
       size: 'SMALL',
       energyLevel: 'LOW',

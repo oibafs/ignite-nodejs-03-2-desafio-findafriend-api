@@ -10,6 +10,7 @@ export class InMemoryPetsRepository implements PetsRepository {
       id: randomUUID(),
       name: data.name,
       description: data.description,
+      species: data.species,
       age: data.age,
       size: data.size,
       energy_level: data.energy_level,

@@ -6,12 +6,14 @@ import {
   Prisma,
   Size,
   SpaceRequirement,
+  Species,
 } from '@prisma/client'
 import { PetsRepository } from '@/repositories/pets-repository'
 
 interface CreatePetUseCaseRequest {
   name: string
   description: string
+  species: Species
   age: Age
   size: Size
   energyLevel: EnergyLevel
@@ -32,6 +34,7 @@ export class CreatePetUseCase {
   async execute({
     name,
     description,
+    species,
     age,
     size,
     energyLevel,
@@ -44,6 +47,7 @@ export class CreatePetUseCase {
     const pet = await this.petsRepository.create({
       name,
       description,
+      species,
       age,
       size,
       energy_level: energyLevel,

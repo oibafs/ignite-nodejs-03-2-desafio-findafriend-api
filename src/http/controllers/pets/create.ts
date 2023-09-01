@@ -6,6 +6,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   const createGymBodySchema = z.object({
     name: z.string(),
     description: z.string(),
+    species: z.enum(['DOG', 'CAT']),
     age: z.enum(['PUP', 'JUNIOR', 'ADULT', 'SENIOR']),
     size: z.enum(['TINY', 'SMALL', 'MEDIUM', 'LARGE', 'GIANT']),
     energy_level: z.enum(['LOW', 'MEDIUM', 'HIGH']),
@@ -18,6 +19,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   const {
     name,
     description,
+    species,
     age,
     size,
     energy_level: energyLevel,
@@ -32,6 +34,7 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   await createPetUseCase.execute({
     name,
     description,
+    species,
     age,
     size,
     energyLevel,

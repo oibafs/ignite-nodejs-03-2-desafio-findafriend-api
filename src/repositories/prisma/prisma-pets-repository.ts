@@ -1,8 +1,24 @@
+import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { prisma } from 'src/lib/prisma'
-import { PetsRepository } from '../pets-repository'
+import { PetsRepository, FindManyByCityParams } from '../pets-repository'
 
 export class PrismaPetsRepository implements PetsRepository {
+  async findManyByCity(params: FindManyByCityParams) {
+    const { city, page } = params
+
+    const pets = await prisma.pet.findMany({
+      where: {
+        org: {
+          city_id: city,
+        },
+      },
+      take: 20,
+      skip: (page - 1) * 20,
+    })
+
+    return pets
+  }
+
   async create(data: Prisma.PetUncheckedCreateInput) {
     const pet = await prisma.pet.create({
       data,

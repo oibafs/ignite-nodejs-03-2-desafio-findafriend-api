@@ -1,7 +1,7 @@
 import { Pet, Prisma } from '@prisma/client'
 
 export interface FindManyByCityParams {
-  city: string
+  cityId: string
   page: number
 }
 

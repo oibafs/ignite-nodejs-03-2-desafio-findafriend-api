@@ -4,12 +4,12 @@ import { PetsRepository, FindManyByCityParams } from '../pets-repository'
 
 export class PrismaPetsRepository implements PetsRepository {
   async findManyByCity(params: FindManyByCityParams) {
-    const { city, page } = params
+    const { cityId, page } = params
 
     const pets = await prisma.pet.findMany({
       where: {
         org: {
-          city_id: city,
+          city_id: cityId,
         },
       },
       take: 20,

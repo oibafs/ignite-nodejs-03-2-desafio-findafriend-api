@@ -19,7 +19,7 @@ export class InMemoryCitiesRepository implements CitiesRepository {
   }
 
   async findStatesWithCitiesAvailable() {
-    const states = [...new Set(this.items.map((item) => item.state))]
+    const states = [...new Set(this.items.map((item) => item.state))].sort()
 
     return states
   }

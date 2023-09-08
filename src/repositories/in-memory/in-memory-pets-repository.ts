@@ -1,6 +1,10 @@
 import { City, Org, Pet, Prisma } from '@prisma/client'
 import { randomUUID } from 'crypto'
-import { PetsRepository, FindManyByCityParams } from '../pets-repository'
+import {
+  PetsRepository,
+  FindManyByCityParams,
+  FindManyByCharacteristicsParams,
+} from '../pets-repository'
 
 export class InMemoryPetsRepository implements PetsRepository {
   public items: Pet[] = []
@@ -8,15 +12,55 @@ export class InMemoryPetsRepository implements PetsRepository {
   public orgs: Org[] = []
 
   async findManyByCity(params: FindManyByCityParams) {
+    const { cityId, page } = params
+
     return this.items
       .filter((item) => {
         const org = this.orgs.find((orgItem) => orgItem.id === item.org_id)
         const city = this.cities.find(
           (cityItem) => cityItem.id === org?.city_id,
         )
-        return city?.id === params.cityId
+        return city?.id === cityId
       })
-      .slice((params.page - 1) * 20, params.page * 20)
+      .slice((page - 1) * 20, page * 20)
+  }
+
+  async findManyByCharacteristics(params: FindManyByCharacteristicsParams) {
+    const {
+      cityId,
+      species,
+      age,
+      size,
+      energyLevel,
+      independencyLevel,
+      spaceRequirement,
+      page,
+    } = params
+
+    return this.items
+      .filter((item) => {
+        const org = this.orgs.find((orgItem) => orgItem.id === item.org_id)
+        const city = this.cities.find(
+          (cityItem) => cityItem.id === org?.city_id,
+        )
+
+        return (
+          city?.id === cityId &&
+          (species && species.length !== 0
+            ? species.includes(item.species)
+            : true) &&
+          (age ? item.age === age : true) &&
+          (size ? item.size === size : true) &&
+          (energyLevel ? item.energy_level === energyLevel : true) &&
+          (independencyLevel
+            ? item.independency_level === independencyLevel
+            : true) &&
+          (spaceRequirement
+            ? item.space_requirement === spaceRequirement
+            : true)
+        )
+      })
+      .slice((page - 1) * 20, page * 20)
   }
 
   async create(data: Prisma.PetUncheckedCreateInput) {

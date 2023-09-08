@@ -1,17 +1,36 @@
+import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository'
+import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository'
 import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository'
+import { Org } from '@prisma/client'
+import { hash } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { CreatePetUseCase } from './create-pet'
-import { registerOrg } from './utils/register-org-for-test'
 
 let sut: CreatePetUseCase
-let orgId: string
+let org: Org
 
 describe('Create Pet Use Case', () => {
   beforeEach(async () => {
     const petsRepository = new InMemoryPetsRepository()
     sut = new CreatePetUseCase(petsRepository)
 
-    orgId = await registerOrg()
+    const citiesRepository = new InMemoryCitiesRepository()
+    const city = await citiesRepository.create({
+      name: 'Recife',
+      state: 'PE',
+    })
+
+    const orgsRepository = new InMemoryOrgsRepository()
+    org = await orgsRepository.create({
+      name: 'Fictional Org',
+      responsible: 'John Doe',
+      email: 'fictional.org@example.com',
+      address: 'Somewhere Street 123',
+      cep: '12345678',
+      city_id: city.id,
+      whatsapp: '11912345678',
+      password_hash: await hash('123456', 6),
+    })
   })
 
   it('should be able to create a pet', async () => {
@@ -30,7 +49,7 @@ describe('Create Pet Use Case', () => {
       requirements: {
         create: [{ description: 'Nenhum' }],
       },
-      orgId,
+      orgId: org.id,
     })
 
     expect(pet.id).toEqual(expect.any(String))

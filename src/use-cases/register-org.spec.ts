@@ -1,19 +1,24 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { compare } from 'bcryptjs'
-import { RegisterOrgUseCase } from './register-org'
+import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository'
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository'
+import { City } from '@prisma/client'
+import { compare } from 'bcryptjs'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
-import { createCity } from './utils/create-city-for-test'
+import { RegisterOrgUseCase } from './register-org'
 
 let sut: RegisterOrgUseCase
-let cityId: string
+let city: City
 
 describe('Register Org Use Case', () => {
   beforeEach(async () => {
     const orgsRepository = new InMemoryOrgsRepository()
     sut = new RegisterOrgUseCase(orgsRepository)
 
-    cityId = await createCity()
+    const citiesRepository = new InMemoryCitiesRepository()
+    city = await citiesRepository.create({
+      name: 'Recife',
+      state: 'PE',
+    })
   })
 
   it('should be able to register an org', async () => {
@@ -23,7 +28,7 @@ describe('Register Org Use Case', () => {
       email: 'fictional.org@example.com',
       address: 'Somewhere Street 123',
       cep: '12345678',
-      cityId,
+      cityId: city.id,
       whatsapp: '11912345678',
       password: '123456',
     })
@@ -38,7 +43,7 @@ describe('Register Org Use Case', () => {
       email: 'fictional.org@example.com',
       address: 'Somewhere Street 123',
       cep: '12345678',
-      cityId,
+      cityId: city.id,
       whatsapp: '11912345678',
       password: '123456',
     })
@@ -57,7 +62,7 @@ describe('Register Org Use Case', () => {
       email,
       address: 'Somewhere Street 123',
       cep: '12345678',
-      cityId,
+      cityId: city.id,
       whatsapp: '11912345678',
       password: '123456',
     })
@@ -69,7 +74,7 @@ describe('Register Org Use Case', () => {
         email,
         address: 'Somewhere Street 123',
         cep: '12345678',
-        cityId,
+        cityId: city.id,
         whatsapp: '11912345678',
         password: '123456',
       }),

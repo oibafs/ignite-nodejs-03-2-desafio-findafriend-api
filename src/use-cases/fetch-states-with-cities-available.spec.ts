@@ -30,6 +30,6 @@ describe('Fetch States With Cities Available Use Case', () => {
     const { states } = await sut.execute()
 
     expect(states).toHaveLength(2)
-    expect(states).toEqual(['PE', 'GO'])
+    expect(states).toEqual(['GO', 'PE'])
   })
 })

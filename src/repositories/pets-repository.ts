@@ -26,6 +26,7 @@ export interface FindManyByCharacteristicsParams {
 }
 
 export interface PetsRepository {
+  findById(id: string): Promise<Pet | null>
   findManyByCity(params: FindManyByCityParams): Promise<Pet[]>
   findManyByCharacteristics(
     params: FindManyByCharacteristicsParams,

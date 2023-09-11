@@ -11,6 +11,16 @@ export class InMemoryPetsRepository implements PetsRepository {
   public cities: City[] = []
   public orgs: Org[] = []
 
+  async findById(id: string) {
+    const pet = this.items.find((item) => item.id === id)
+
+    if (!pet) {
+      return null
+    }
+
+    return pet
+  }
+
   async findManyByCity(params: FindManyByCityParams) {
     const { cityId, page } = params
 

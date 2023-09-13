@@ -1,4 +1,4 @@
-import { makeFetchStatesWithCitiesAvailableUseCase } from '@/use-cases/factories/make-fetch-states-with-cities-available'
+import { makeFetchStatesWithCitiesAvailableUseCase } from '@/use-cases/factories/make-fetch-states-with-cities-available-use-case'
 import { FastifyRequest, FastifyReply } from 'fastify'
 
 export async function statesWithCitiesAvailable(

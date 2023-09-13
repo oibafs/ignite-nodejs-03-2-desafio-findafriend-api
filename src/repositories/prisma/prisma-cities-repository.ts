@@ -3,6 +3,16 @@ import { prisma } from 'src/lib/prisma'
 import { CitiesRepository, CityData } from '../cities-repository'
 
 export class PrismaCitiesRepository implements CitiesRepository {
+  async findById(id: string) {
+    const city = await prisma.city.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    return city
+  }
+
   async findByNameAndState(data: CityData) {
     const { name, state } = data
 

@@ -1,3 +1,4 @@
+import { InvalidCityError } from '@/use-cases/errors/invalid-city-error'
 import { OrgAlreadyExistsError } from '@/use-cases/errors/org-already-exists-error'
 import { makeRegisterOrgUseCase } from '@/use-cases/factories/make-register-org-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -34,6 +35,8 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
   } catch (error) {
     if (error instanceof OrgAlreadyExistsError) {
       return reply.status(409).send()
+    } else if (error instanceof InvalidCityError) {
+      return reply.status(400).send(error.message)
     }
 
     throw error

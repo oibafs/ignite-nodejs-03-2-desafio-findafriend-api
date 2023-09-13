@@ -22,7 +22,7 @@
     "@vitest/coverage-v8": "0.34.3",
     "@vitest/ui": "0.34.3",
     "eslint": "8.47.0",
-    "prisma": "5.2.0",
+    "prisma": "5.3.0",
     "tsup": "7.2.0",
     "tsx": "3.12.7",
     "typescript": "5.1.6",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@fastify/jwt": "7.2.0",
-    "@prisma/client": "5.2.0",
+    "@prisma/client": "5.3.0",
     "bcryptjs": "2.4.3",
     "dotenv": "16.3.1",
     "fastify": "4.21.0",

@@ -1,4 +1,4 @@
-import { makeFetchCitiesByStateUseCase } from '@/use-cases/factories/make-fetch-cities-by-state'
+import { makeFetchCitiesByStateUseCase } from '@/use-cases/factories/make-fetch-cities-by-state-use-case'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 

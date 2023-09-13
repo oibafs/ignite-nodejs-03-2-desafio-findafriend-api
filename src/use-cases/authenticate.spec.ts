@@ -7,11 +7,13 @@ import { InvalidCredentialsError } from './errors/invalid-credentials-error'
 
 const email = 'fictional.org@example.com'
 const password = '123456'
+
+let orgsRepository: InMemoryOrgsRepository
 let sut: AuthenticateUseCase
 
 describe('Authenticate Use Case', () => {
   beforeEach(async () => {
-    const orgsRepository = new InMemoryOrgsRepository()
+    orgsRepository = new InMemoryOrgsRepository()
     sut = new AuthenticateUseCase(orgsRepository)
 
     const citiesRepository = new InMemoryCitiesRepository()
@@ -19,6 +21,7 @@ describe('Authenticate Use Case', () => {
       name: 'Recife',
       state: 'PE',
     })
+    orgsRepository.cities = citiesRepository.items
 
     await orgsRepository.create({
       name: 'Fictional Org',

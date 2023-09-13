@@ -29,6 +29,7 @@ describe('Fetch Pets By Characteristics', () => {
     petsRepository.cities = citiesRepository.items
 
     const orgsRepository = new InMemoryOrgsRepository()
+    orgsRepository.cities = citiesRepository.items
     org1 = await orgsRepository.create({
       name: 'Fictional Org',
       responsible: 'John Doe',

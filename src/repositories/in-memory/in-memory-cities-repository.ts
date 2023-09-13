@@ -5,6 +5,16 @@ import { CitiesRepository, CityData } from '../cities-repository'
 export class InMemoryCitiesRepository implements CitiesRepository {
   public items: City[] = []
 
+  async findById(id: string) {
+    const city = this.items.find((item) => item.id === id)
+
+    if (!city) {
+      return null
+    }
+
+    return city
+  }
+
   async findByNameAndState(data: CityData) {
     const { name, state } = data
     const cities = this.items.filter(

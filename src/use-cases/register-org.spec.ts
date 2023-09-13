@@ -5,13 +5,15 @@ import { compare } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
 import { RegisterOrgUseCase } from './register-org'
+import { InvalidCityError } from './errors/invalid-city-error'
 
-let sut: RegisterOrgUseCase
 let city: City
+let orgsRepository: InMemoryOrgsRepository
+let sut: RegisterOrgUseCase
 
 describe('Register Org Use Case', () => {
   beforeEach(async () => {
-    const orgsRepository = new InMemoryOrgsRepository()
+    orgsRepository = new InMemoryOrgsRepository()
     sut = new RegisterOrgUseCase(orgsRepository)
 
     const citiesRepository = new InMemoryCitiesRepository()
@@ -19,6 +21,7 @@ describe('Register Org Use Case', () => {
       name: 'Recife',
       state: 'PE',
     })
+    orgsRepository.cities = citiesRepository.items
   })
 
   it('should be able to register an org', async () => {
@@ -79,5 +82,20 @@ describe('Register Org Use Case', () => {
         password: '123456',
       }),
     ).rejects.toBeInstanceOf(OrgAlreadyExistsError)
+  })
+
+  it('should not be able to register an org with an invalid city id', async () => {
+    await expect(() =>
+      sut.execute({
+        name: 'Fictional Org',
+        responsible: 'John Doe',
+        email: 'fictional.org@example.com',
+        address: 'Somewhere Street 123',
+        cep: '12345678',
+        cityId: 'random-id',
+        whatsapp: '11912345678',
+        password: '123456',
+      }),
+    ).rejects.toBeInstanceOf(InvalidCityError)
   })
 })

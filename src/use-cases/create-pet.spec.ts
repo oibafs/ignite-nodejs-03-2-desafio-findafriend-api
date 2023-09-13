@@ -6,12 +6,14 @@ import { hash } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { CreatePetUseCase } from './create-pet'
 
-let sut: CreatePetUseCase
 let org: Org
+
+let petsRepository: InMemoryPetsRepository
+let sut: CreatePetUseCase
 
 describe('Create Pet Use Case', () => {
   beforeEach(async () => {
-    const petsRepository = new InMemoryPetsRepository()
+    petsRepository = new InMemoryPetsRepository()
     sut = new CreatePetUseCase(petsRepository)
 
     const citiesRepository = new InMemoryCitiesRepository()
@@ -19,8 +21,10 @@ describe('Create Pet Use Case', () => {
       name: 'Recife',
       state: 'PE',
     })
+    petsRepository.cities = citiesRepository.items
 
     const orgsRepository = new InMemoryOrgsRepository()
+    orgsRepository.cities = citiesRepository.items
     org = await orgsRepository.create({
       name: 'Fictional Org',
       responsible: 'John Doe',
@@ -31,6 +35,7 @@ describe('Create Pet Use Case', () => {
       whatsapp: '11912345678',
       password_hash: await hash('123456', 6),
     })
+    petsRepository.orgs = orgsRepository.items
   })
 
   it('should be able to create a pet', async () => {

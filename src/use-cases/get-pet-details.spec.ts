@@ -23,6 +23,7 @@ describe('Get Pet Details Use Case', () => {
     })
 
     const orgsRepository = new InMemoryOrgsRepository()
+    orgsRepository.cities = citiesRepository.items
     const org = await orgsRepository.create({
       name: 'Fictional Org',
       responsible: 'John Doe',

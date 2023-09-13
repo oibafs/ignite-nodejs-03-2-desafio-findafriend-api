@@ -2,6 +2,7 @@ import { hash } from 'bcryptjs'
 import { OrgsRepository } from 'src/repositories/orgs-repository'
 import { OrgAlreadyExistsError } from './errors/org-already-exists-error'
 import { Org } from '@prisma/client'
+import { InvalidCityError } from './errors/invalid-city-error'
 
 interface RegisterOrgUseCaseRequest {
   name: string
@@ -37,19 +38,35 @@ export class RegisterOrgUseCase {
       throw new OrgAlreadyExistsError()
     }
 
-    const passwordHash = await hash(password, 6)
+    try {
+      const passwordHash = await hash(password, 6)
 
-    const org = await this.orgsRepository.create({
-      name,
-      responsible,
-      email,
-      address,
-      cep,
-      city_id: cityId,
-      whatsapp,
-      password_hash: passwordHash,
-    })
+      const org = await this.orgsRepository.create({
+        name,
+        responsible,
+        email,
+        address,
+        cep,
+        city_id: cityId,
+        whatsapp,
+        password_hash: passwordHash,
+      })
 
-    return { org }
+      return { org }
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'message' in error &&
+        typeof error.message === 'string' &&
+        error.message.includes(
+          'Foreign key constraint failed on the field: `orgs_city_id_fkey (index)`',
+        )
+      ) {
+        throw new InvalidCityError()
+      }
+
+      throw error
+    }
   }
 }

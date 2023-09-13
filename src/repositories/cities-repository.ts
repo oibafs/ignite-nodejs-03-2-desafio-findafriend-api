@@ -6,6 +6,7 @@ export interface CityData {
 }
 
 export interface CitiesRepository {
+  findById(id: string): Promise<City | null>
   findByNameAndState(data: CityData): Promise<City[] | null>
   findStatesWithCitiesAvailable(): Promise<State[]>
   findByState(state: State, page: number): Promise<City[]>

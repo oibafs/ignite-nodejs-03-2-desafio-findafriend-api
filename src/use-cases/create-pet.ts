@@ -9,6 +9,7 @@ import {
   Species,
 } from '@prisma/client'
 import { PetsRepository } from '@/repositories/pets-repository'
+import { InvalidOrgError } from './errors/invalid-org-error'
 
 interface CreatePetUseCaseRequest {
   name: string
@@ -44,20 +45,36 @@ export class CreatePetUseCase {
     requirements,
     orgId,
   }: CreatePetUseCaseRequest): Promise<CreatePetUseCaseResponse> {
-    const pet = await this.petsRepository.create({
-      name,
-      description,
-      species,
-      age,
-      size,
-      energy_level: energyLevel,
-      independency_level: independencyLevel,
-      space_requirement: spaceRequirement,
-      pictures,
-      requirements,
-      org_id: orgId,
-    })
+    try {
+      const pet = await this.petsRepository.create({
+        name,
+        description,
+        species,
+        age,
+        size,
+        energy_level: energyLevel,
+        independency_level: independencyLevel,
+        space_requirement: spaceRequirement,
+        pictures,
+        requirements,
+        org_id: orgId,
+      })
 
-    return { pet }
+      return { pet }
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'message' in error &&
+        typeof error.message === 'string' &&
+        error.message.includes(
+          'Foreign key constraint failed on the field: `pets_org_id_fkey (index)`',
+        )
+      ) {
+        throw new InvalidOrgError()
+      }
+
+      throw error
+    }
   }
 }

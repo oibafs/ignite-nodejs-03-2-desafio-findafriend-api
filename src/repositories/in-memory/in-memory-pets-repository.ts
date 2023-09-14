@@ -5,6 +5,7 @@ import {
   FindManyByCityParams,
   FindManyByCharacteristicsParams,
 } from '../pets-repository'
+import { InvalidOrgError } from '@/use-cases/errors/invalid-org-error'
 
 export class InMemoryPetsRepository implements PetsRepository {
   public items: Pet[] = []
@@ -74,6 +75,12 @@ export class InMemoryPetsRepository implements PetsRepository {
   }
 
   async create(data: Prisma.PetUncheckedCreateInput) {
+    const org = this.orgs.find((item) => item.id === data.org_id)
+
+    if (!org) {
+      throw new InvalidOrgError()
+    }
+
     const pet = {
       id: randomUUID(),
       name: data.name,

@@ -1,3 +1,4 @@
+import { InvalidOrgError } from '@/use-cases/errors/invalid-org-error'
 import { makeCreatePetUseCase } from '@/use-cases/factories/make-create-pet-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -29,25 +30,33 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     requirements,
   } = createGymBodySchema.parse(request.body)
 
-  const createPetUseCase = makeCreatePetUseCase()
+  try {
+    const createPetUseCase = makeCreatePetUseCase()
 
-  await createPetUseCase.execute({
-    name,
-    description,
-    species,
-    age,
-    size,
-    energyLevel,
-    independencyLevel,
-    spaceRequirement,
-    pictures: {
-      create: pictures,
-    },
-    requirements: {
-      create: requirements,
-    },
-    orgId: request.user.sub,
-  })
+    await createPetUseCase.execute({
+      name,
+      description,
+      species,
+      age,
+      size,
+      energyLevel,
+      independencyLevel,
+      spaceRequirement,
+      pictures: {
+        create: pictures,
+      },
+      requirements: {
+        create: requirements,
+      },
+      orgId: request.user.sub,
+    })
+  } catch (error) {
+    if (error instanceof InvalidOrgError) {
+      return reply.status(400).send(error.message)
+    }
+
+    throw error
+  }
 
   return reply.status(201).send()
 }

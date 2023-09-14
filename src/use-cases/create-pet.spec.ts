@@ -5,6 +5,7 @@ import { Org } from '@prisma/client'
 import { hash } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { CreatePetUseCase } from './create-pet'
+import { InvalidOrgError } from './errors/invalid-org-error'
 
 let org: Org
 
@@ -58,5 +59,27 @@ describe('Create Pet Use Case', () => {
     })
 
     expect(pet.id).toEqual(expect.any(String))
+  })
+
+  it('should not be able to create a pet with an invalid org id', async () => {
+    await expect(() =>
+      sut.execute({
+        name: 'Alfredo',
+        description: 'Cão de guarda',
+        species: 'DOG',
+        age: 'JUNIOR',
+        size: 'SMALL',
+        energyLevel: 'LOW',
+        independencyLevel: 'HIGH',
+        spaceRequirement: 'LARGE',
+        pictures: {
+          create: [{ url: 'http://picture.com/123' }],
+        },
+        requirements: {
+          create: [{ description: 'Nenhum' }],
+        },
+        orgId: 'random-id',
+      }),
+    ).rejects.toBeInstanceOf(InvalidOrgError)
   })
 })

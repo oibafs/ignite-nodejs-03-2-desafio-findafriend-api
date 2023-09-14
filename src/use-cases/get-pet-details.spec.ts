@@ -34,6 +34,7 @@ describe('Get Pet Details Use Case', () => {
       whatsapp: '11912345678',
       password_hash: await hash('123456', 6),
     })
+    petsRepository.orgs = orgsRepository.items
 
     const newPet = await petsRepository.create({
       name: 'Alfredo',

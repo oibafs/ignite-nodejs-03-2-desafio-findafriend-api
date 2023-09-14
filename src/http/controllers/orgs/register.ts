@@ -34,7 +34,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     })
   } catch (error) {
     if (error instanceof OrgAlreadyExistsError) {
-      return reply.status(409).send()
+      return reply.status(409).send(error.message)
     } else if (error instanceof InvalidCityError) {
       return reply.status(400).send(error.message)
     }

@@ -7,5 +7,7 @@ import { details } from './details'
 export async function petsRoutes(app: FastifyInstance) {
   app.get('/pets/:pet_id', details)
   app.get('/pets', petsByCharacteristics)
+
+  /** Authenticated **/
   app.post('/pets', { onRequest: [verifyJWT] }, create)
 }

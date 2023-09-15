@@ -7,7 +7,7 @@ export async function petsByCharacteristics(
   reply: FastifyReply,
 ) {
   const petsByCharacteristicsQuerySchema = z.object({
-    cityId: z.string(),
+    city_id: z.string(),
     species: z
       .union([z.enum(['DOG', 'CAT']).array(), z.enum(['DOG', 'CAT'])])
       .optional(),
@@ -20,7 +20,7 @@ export async function petsByCharacteristics(
   })
 
   const {
-    cityId,
+    city_id: cityId,
     species,
     age,
     size,

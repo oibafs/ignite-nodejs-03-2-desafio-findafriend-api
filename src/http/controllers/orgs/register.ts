@@ -11,13 +11,21 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     email: z.string().email(),
     address: z.string(),
     cep: z.string().regex(/^\d{8}$/),
-    cityId: z.string().uuid(),
+    city_id: z.string().uuid(),
     whatsapp: z.string().regex(/^[1-9]\d{9,10}$/),
     password: z.string().min(6),
   })
 
-  const { name, responsible, email, address, cep, cityId, whatsapp, password } =
-    registerBodySchema.parse(request.body)
+  const {
+    name,
+    responsible,
+    email,
+    address,
+    cep,
+    city_id: cityId,
+    whatsapp,
+    password,
+  } = registerBodySchema.parse(request.body)
 
   try {
     const registerOrgUseCase = makeRegisterOrgUseCase()

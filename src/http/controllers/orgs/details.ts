@@ -13,8 +13,10 @@ export async function details(request: FastifyRequest, reply: FastifyReply) {
     })
 
     return reply.status(200).send({
-      ...org,
-      password_hash: undefined,
+      org: {
+        ...org,
+        password_hash: undefined,
+      },
     })
   } catch (error) {
     if (error instanceof ResourceNotFoundError) {

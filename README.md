@@ -25,4 +25,4 @@ API para a adoção de animais.
 - [x] A senha do usuário precisa estar criptografada;
 - [x] Os dados da aplicação precisam estar persistidos em um banco PostgreSQL;
 - [x] Todas listas de dados precisam estar paginadas com 20 itens por página;
-- [ ] A ORG deve ser identificada por um JWT (JSON Web Token);
+- [x] A ORG deve ser identificada por um JWT (JSON Web Token);
